@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VMIS App Launcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .test-link {
+            display: inline-block;
+            padding: 20px 40px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            margin: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        .test-link:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .info-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .status {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 VMIS Application Test Launcher</h1>
+        
+        <div class="info-box">
+            <h2>Launch Your Vehicle Management System</h2>
+            <p>Click the button below to open the VMIS application:</p>
+            
+            <a href="http://localhost:3001" class="test-link" target="_blank">
+                🚀 Launch VMIS App
+            </a>
+        </div>
+        
+        <div class="info-box">
+            <h3>Quick Test Checklist:</h3>
+            <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+                <p>✅ <strong>Landing Page Visible:</strong> Hero section should appear immediately</p>
+                <p>✅ <strong>Learn More Button:</strong> Click "📚 Learn More" in the hero section</p>
+                <p>✅ <strong>Vehicle Demo:</strong> Click "See Vehicle Lookup Demo" in the modal</p>
+                <p>✅ <strong>Demo Data:</strong> Should auto-fill Toyota Camry 2020</p>
+                <p>✅ <strong>Authentication:</strong> "Get Started" should show login form</p>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>Current Status:</h3>
+            <div class="status" id="status">
+                Checking services...
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check if services are running
+        async function checkServices() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // Test frontend
+                const frontendResponse = await fetch('http://localhost:3001', { 
+                    method: 'HEAD',
+                    mode: 'no-cors'
+                });
+                
+                // Test backend  
+                const backendResponse = await fetch('http://localhost:5001/api/test', {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                statusDiv.innerHTML = `
+                    ✅ Frontend: Running on port 3001<br>
+                    ✅ Backend: Running on port 5001<br>
+                    ✅ Ready to test!
+                `;
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    ⚠️ Some services may not be accessible<br>
+                    💡 Make sure Docker containers are running<br>
+                    🔧 Run: docker-compose up -d
+                `;
+            }
+        }
+        
+        // Check services when page loads
+        checkServices();
+    </script>
+</body>
+</html>

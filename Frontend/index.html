@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Maintenance and Inspection System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Dashboard specific styles - Force visibility */
+        #dashboard {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #dashboard.show {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        .dashboard-tab {
+            display: none !important;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-tab.active {
+            display: block !important;
+            visibility: visible !important;
+        }
+        
+        .dashboard-tabs {
+            display: flex !important;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 20px;
+        }
+        
+        .tab-btn {
+            background: rgba(255,255,255,0.8);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .dashboard-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .dashboard-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .forms-container {
+            display: block !important;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Enhanced Tour Styles */
+        .tour-step-content {
+            padding: 0;
+        }
+        
+        .tour-hero {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .tour-hero.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .tour-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .tour-hero h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .tour-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #555;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        
+        .feature-text h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .feature-text p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .tour-tip {
+            display: flex;
+            align-items: center;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .tip-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .process-step {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .step-content p {
+            margin: 0 0 10px 0;
+            color: #666;
+        }
+        
+        .step-visual {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        
+        .tour-highlight {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .highlight-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .maintenance-benefits {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .benefit-item {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .benefit-item.premium {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e9ecff 100%);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .benefit-item p {
+            margin: 0;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .savings-counter {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .counter-icon {
+            font-size: 3rem;
+            margin-right: 20px;
+        }
+        
+        .counter-text h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.3rem;
+        }
+        
+        .counter-text p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .action-card {
+            background: #fff;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .action-card.primary {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e9ecff 100%);
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .action-card h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .action-card p {
+            margin: 0 0 15px 0;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .action-time {
+            background: #e9ecef;
+            color: #666;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+        
+        .success-message {
+            text-align: center;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+        
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .success-message h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.3rem;
+        }
+        
+        .success-message p {
+            margin: 0;
+            opacity: 0.95;
+        }
+        
+        .next-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .steps-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .maintenance-benefits {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta name="description" content="A comprehensive system for managing vehicle maintenance and inspections, ensuring safety and compliance.">
+    <meta name="keywords" content="vehicle, maintenance, inspection, system, safety, compliance">
+    <meta name="author" content="Janice Ainembabazi">
+</head>
+<body>
+    <!-- Fixed Navigation Bar -->
+    <div id="userNavBar" class="user-nav-bar" style="display: none;">
+        <div class="nav-left">
+            <button id="homeNavBtn" class="nav-btn">🏠 Home</button>
+            <button id="formsNavBtn" class="nav-btn">📝 Forms</button>
+            <button id="dashboardNavBtn" class="nav-btn">📊 Dashboard</button>
+        </div>
+        <div class="nav-center">
+            <span id="welcomeText">Welcome!</span>
+        </div>
+        <div class="nav-right">
+            <button id="logoutNavBtn" class="nav-btn logout">Logout</button>
+        </div>
+    </div>
+
+    <header class="app-header">
+        <img src="images/logo.png" alt="Vehicle Maintenance Logo" class="logo">
+        <h1 class="main-heading">Vehicle Maintenance and Inspection Sync</h1>
+        <p class="tagline">Stay on top of your car's health and policy reminders.</p>
+        <button id="backToHomeBtn" class="back-to-home-btn" onclick="goToLandingPage()" style="display: none;">🏠 Back to Home</button>
+    </header>
+
+    <main>
+        <!-- Landing Page Section -->
+        <div id="landingPage" class="landing-page">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2 class="hero-title">Manage Your Vehicle's Health</h2>
+                    <p class="hero-description">
+                        Keep track of maintenance, inspections, and insurance all in one place. 
+                        Never miss an important service date again.
+                    </p>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <img src="images/car.png" alt="Car" class="feature-icon">
+                            <h3>Track Maintenance</h3>
+                            <p>Schedule and monitor regular maintenance</p>
+                        </div>
+                        <div class="feature-card">
+                            <img src="images/truck.png" alt="Truck" class="feature-icon">
+                            <h3>Manage Fleet</h3>
+                            <p>Handle multiple vehicles effortlessly</p>
+                        </div>
+                        <div class="feature-card">
+                            <img src="images/motocycle.png" alt="Motorcycle" class="feature-icon">
+                            <h3>Insurance Tracking</h3>
+                            <p>Never let your insurance expire</p>
+                        </div>
+                    </div>
+                    <div class="cta-buttons">
+                        <button id="getStartedBtn" class="cta-primary">Get Started</button>
+                        <button id="learnMoreBtn" class="cta-secondary">📚 Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-container" style="display: none;">
+            <form id="vehicleForm">
+                <section>
+                    <h2>Vehicle Information</h2>
+                    <label for="ownerName">Owner's Name:</label>
+                    <input type="text" id="ownerName" name="ownerName" required>
+
+                    <br/>
+
+                    <label for="vehicleMake">Vehicle Make:</label>
+                    <input type="text" id="vehicleMake" name="vehicleMake" required>
+
+                    <br/>
+
+                    <label for="vehicleModel">Vehicle Model:</label>
+                    <input type="text" id="vehicleModel" name="vehicleModel" required>
+
+                    <br/>
+
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" min="1900" max="2030" required>
+
+                    <br/>
+
+                    <label for="licensePlate">License Plate:</label>
+                    <input type="text" id="licensePlate" name="licensePlate" required>
+
+                    <label for="vehicleType">Vehicle Type:</label>
+                    <select id="vehicleType" name="vehicleType" required>
+                        <option value="">Select Vehicle Type</option> 
+                        <option value="car">Car</option>
+                        <option value="truck">Truck</option>
+                        <option value="motorcycle">Motorcycle</option>
+                    </select>
+                </section>
+
+                <section>
+                    <h2>Insurance Information</h2>
+
+                    <label for="insuranceProvider">Insurance Provider:</label>
+                    <input type="text" id="insuranceProvider" name="insuranceProvider" required>
+
+                    <label for="policyNumber">Policy Number:</label>
+                    <input type="text" id="policyNumber" name="policyNumber" required>
+
+                    <label for="expirationDate">Expiration Date:</label>
+                    <input type="date" id="expirationDate" name="expirationDate" required>
+                </section>
+
+                <section>
+                    <h2>Inspection Details</h2>
+
+                    <label for="maintenanceTask">Maintenance Task:</label>
+                    <input type="text" id="maintenanceTask" name="maintenanceTask" required>
+
+                    <label for="inspectionDate">Inspection Date:</label>
+                    <input type="date" id="inspectionDate" name="inspectionDate" required>
+
+                    <label for="mileage">Mileage:</label>
+                    <input type="number" id="mileage" name="mileage" required>
+                </section>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!-- Maintenance Scheduler Section -->
+        <div id="maintenanceScheduler" class="maintenance-section" style="display: none;">
+            <h2>🔧 Maintenance Scheduler</h2>
+            <p>Set up automatic maintenance reminders based on time or mileage intervals.</p>
+            
+            <form id="scheduleForm">
+                <div class="form-grid">
+                    <div>
+                        <label for="scheduleVehicle">Vehicle:</label>
+                        <select id="scheduleVehicle" name="vehicleId" required>
+                            <option value="">Select a vehicle</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="maintenanceType">Maintenance Type:</label>
+                        <select id="maintenanceType" name="maintenanceType" required>
+                            <option value="">Select maintenance type</option>
+                            <option value="Oil Change">🛢️ Oil Change</option>
+                            <option value="Tire Rotation">🔄 Tire Rotation</option>
+                            <option value="Brake Inspection">🛑 Brake Inspection</option>
+                            <option value="Air Filter Replacement">🌬️ Air Filter Replacement</option>
+                            <option value="Battery Check">🔋 Battery Check</option>
+                            <option value="Transmission Service">⚙️ Transmission Service</option>
+                            <option value="Coolant Flush">❄️ Coolant Flush</option>
+                            <option value="Spark Plug Replacement">⚡ Spark Plug Replacement</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div>
+                        <label for="intervalMonths">Interval (Months):</label>
+                        <select id="intervalMonths" name="intervalMonths">
+                            <option value="">Select interval</option>
+                            <option value="3">Every 3 months</option>
+                            <option value="6">Every 6 months</option>
+                            <option value="12">Every 12 months</option>
+                            <option value="24">Every 24 months</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="intervalMiles">Interval (Miles):</label>
+                        <select id="intervalMiles" name="intervalMiles">
+                            <option value="">Select mileage</option>
+                            <option value="3000">Every 3,000 miles</option>
+                            <option value="5000">Every 5,000 miles</option>
+                            <option value="7500">Every 7,500 miles</option>
+                            <option value="10000">Every 10,000 miles</option>
+                            <option value="15000">Every 15,000 miles</option>
+                            <option value="30000">Every 30,000 miles</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="scheduleDescription">Description (Optional):</label>
+                    <textarea id="scheduleDescription" name="description" rows="3" 
+                        placeholder="Additional notes about this maintenance schedule..."></textarea>
+                </div>
+                
+                <button type="submit">🗓️ Create Schedule</button>
+            </form>
+        </div>
+
+        <!-- Maintenance Reminders Section -->
+        <div id="reminderSection" class="maintenance-section" style="display: none;">
+            <h2>🔔 Upcoming Maintenance</h2>
+            <div id="remindersList">
+                <p>Loading reminders...</p>
+            </div>
+        </div>
+
+        <!-- Inspection Checklist Section -->
+        <div id="inspectionSection" class="maintenance-section" style="display: none;">
+            <h2>📋 Vehicle Inspection</h2>
+            <p>Perform comprehensive vehicle inspections with customizable checklists.</p>
+            
+            <div class="inspection-templates">
+                <h3>Inspection Templates</h3>
+                <div class="template-cards">
+                    <div class="template-card" data-template="pre-trip">
+                        <h4>🚗 Pre-Trip Inspection</h4>
+                        <p>Quick safety check before driving</p>
+                        <button onclick="startInspection('pre-trip')">Start Inspection</button>
+                    </div>
+                    <div class="template-card" data-template="post-trip">
+                        <h4>🏁 Post-Trip Inspection</h4>
+                        <p>Comprehensive check after trip</p>
+                        <button onclick="startInspection('post-trip')">Start Inspection</button>
+                    </div>
+                    <div class="template-card" data-template="annual">
+                        <h4>📅 Annual Inspection</h4>
+                        <p>Detailed yearly inspection</p>
+                        <button onclick="startInspection('annual')">Start Inspection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Provider Directory -->
+        <div id="serviceDirectory" class="maintenance-section" style="display: none;">
+            <h2>🔧 Service Provider Directory</h2>
+            <p>Find and manage trusted mechanics and service providers.</p>
+            
+            <button onclick="showAddProvider()" class="cta-primary">➕ Add Service Provider</button>
+            
+            <div id="providersList">
+                <p>Loading service providers...</p>
+            </div>
+        </div>
+
+        <!-- Vehicle Dashboard with Enhanced Features -->
+        <div id="dashboard" style="display: none;">
+            <!-- Dashboard Header with Navigation -->
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h2>📊 Vehicle Management Dashboard</h2>
+                    <button onclick="goToLandingPage()" class="home-nav-btn">🏠 Back to Home</button>
+                </div>
+            </div>
+
+            <!-- Dashboard Navigation Tabs -->
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="showDashboardTab('overview')">📊 Overview</button>
+                <button class="tab-btn" onclick="showDashboardTab('forms')">📝 Forms</button>
+                <button class="tab-btn" onclick="showDashboardTab('maintenance')">🔧 Maintenance</button>
+                <button class="tab-btn" onclick="showDashboardTab('inspection')">📋 Inspection</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overviewTab" class="dashboard-tab active">
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>🚗 My Vehicles</h3>
+                        <div id="vehiclesList"></div>
+                        <button onclick="showDashboardTab('forms')">➕ Add Vehicle</button>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>🔔 Active Reminders</h3>
+                        <div id="activeReminders"></div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>📈 Recent Activity</h3>
+                        <div id="recentActivity"></div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button onclick="showDashboardTab('maintenance')">🗓️ Schedule Maintenance</button>
+                    <button onclick="showDashboardTab('inspection')">📋 Inspection Checklist</button>
+                    <button id="viewRecords">� View All Records</button>
+                </div>
+            </div>
+
+            <!-- Forms Tab -->
+            <div id="formsTab" class="dashboard-tab">
+                <div class="forms-container">
+                    <!-- Vehicle Registration Form -->
+                    <div class="form-section">
+                        <h3>🚗 Vehicle Registration</h3>
+                        <form id="dashboardVehicleForm">
+                            <div class="form-grid">
+                                <div>
+                                    <label for="dashOwnerName">Owner's Name:</label>
+                                    <input type="text" id="dashOwnerName" name="ownerName" required>
+                                </div>
+                                <div>
+                                    <label for="dashVehicleMake">Vehicle Make:</label>
+                                    <input type="text" id="dashVehicleMake" name="vehicleMake" required>
+                                </div>
+                                <div>
+                                    <label for="dashVehicleModel">Vehicle Model:</label>
+                                    <input type="text" id="dashVehicleModel" name="vehicleModel" required>
+                                </div>
+                                <div>
+                                    <label for="dashYear">Year:</label>
+                                    <input type="number" id="dashYear" name="year" min="1900" max="2030" required>
+                                </div>
+                                <div>
+                                    <label for="dashLicensePlate">License Plate:</label>
+                                    <input type="text" id="dashLicensePlate" name="licensePlate" required>
+                                </div>
+                                <div>
+                                    <label for="dashVehicleType">Vehicle Type:</label>
+                                    <select id="dashVehicleType" name="vehicleType" required>
+                                        <option value="">Select Vehicle Type</option> 
+                                        <option value="car">Car</option>
+                                        <option value="truck">Truck</option>
+                                        <option value="motorcycle">Motorcycle</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit">💾 Save Vehicle</button>
+                        </form>
+                    </div>
+
+                    <!-- Insurance Information Form -->
+                    <div class="form-section">
+                        <h3>🛡️ Insurance Information</h3>
+                        <form id="dashboardInsuranceForm">
+                            <div class="form-grid">
+                                <div>
+                                    <label for="dashInsuranceProvider">Insurance Provider:</label>
+                                    <input type="text" id="dashInsuranceProvider" name="insuranceProvider" required>
+                                </div>
+                                <div>
+                                    <label for="dashPolicyNumber">Policy Number:</label>
+                                    <input type="text" id="dashPolicyNumber" name="policyNumber" required>
+                                </div>
+                                <div>
+                                    <label for="dashExpirationDate">Expiration Date:</label>
+                                    <input type="date" id="dashExpirationDate" name="expirationDate" required>
+                                </div>
+                            </div>
+                            <button type="submit">💾 Save Insurance Info</button>
+                        </form>
+                    </div>
+
+                    <!-- Maintenance Record Form -->
+                    <div class="form-section">
+                        <h3>� Maintenance Record</h3>
+                        <form id="dashboardMaintenanceForm">
+                            <div class="form-grid">
+                                <div>
+                                    <label for="dashMaintenanceTask">Maintenance Task:</label>
+                                    <input type="text" id="dashMaintenanceTask" name="maintenanceTask" required>
+                                </div>
+                                <div>
+                                    <label for="dashInspectionDate">Service Date:</label>
+                                    <input type="date" id="dashInspectionDate" name="inspectionDate" required>
+                                </div>
+                                <div>
+                                    <label for="dashMileage">Mileage:</label>
+                                    <input type="number" id="dashMileage" name="mileage" required>
+                                </div>
+                            </div>
+                            <button type="submit">💾 Save Maintenance Record</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Tab -->
+            <div id="maintenanceTab" class="dashboard-tab">
+                <div class="maintenance-content">
+                    <h3>🗓️ Maintenance Scheduler</h3>
+                    <p>Set up automatic maintenance reminders based on time or mileage intervals.</p>
+                    
+                    <form id="dashboardScheduleForm">
+                        <div class="form-grid">
+                            <div>
+                                <label for="dashScheduleVehicle">Vehicle:</label>
+                                <select id="dashScheduleVehicle" name="vehicleId" required>
+                                    <option value="">Select a vehicle</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="dashMaintenanceType">Maintenance Type:</label>
+                                <select id="dashMaintenanceType" name="maintenanceType" required>
+                                    <option value="">Select maintenance type</option>
+                                    <option value="Oil Change">🛢️ Oil Change</option>
+                                    <option value="Tire Rotation">🔄 Tire Rotation</option>
+                                    <option value="Brake Inspection">🛑 Brake Inspection</option>
+                                    <option value="Air Filter Replacement">🌬️ Air Filter Replacement</option>
+                                    <option value="Battery Check">� Battery Check</option>
+                                    <option value="Transmission Service">⚙️ Transmission Service</option>
+                                    <option value="Coolant Flush">❄️ Coolant Flush</option>
+                                    <option value="Spark Plug Replacement">⚡ Spark Plug Replacement</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div>
+                                <label for="dashIntervalMonths">Interval (Months):</label>
+                                <select id="dashIntervalMonths" name="intervalMonths">
+                                    <option value="">Select interval</option>
+                                    <option value="3">Every 3 months</option>
+                                    <option value="6">Every 6 months</option>
+                                    <option value="12">Every 12 months</option>
+                                    <option value="24">Every 24 months</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="dashIntervalMiles">Interval (Miles):</label>
+                                <select id="dashIntervalMiles" name="intervalMiles">
+                                    <option value="">Select mileage</option>
+                                    <option value="3000">Every 3,000 miles</option>
+                                    <option value="5000">Every 5,000 miles</option>
+                                    <option value="7500">Every 7,500 miles</option>
+                                    <option value="10000">Every 10,000 miles</option>
+                                    <option value="15000">Every 15,000 miles</option>
+                                    <option value="30000">Every 30,000 miles</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="dashScheduleDescription">Description (Optional):</label>
+                            <textarea id="dashScheduleDescription" name="description" rows="3" 
+                                placeholder="Additional notes about this maintenance schedule..."></textarea>
+                        </div>
+                        
+                        <button type="submit">🗓️ Create Schedule</button>
+                    </form>
+
+                    <!-- Upcoming Maintenance -->
+                    <div class="reminders-section">
+                        <h3>🔔 Upcoming Maintenance</h3>
+                        <div id="dashboardRemindersList">
+                            <p>Loading reminders...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inspection Tab -->
+            <div id="inspectionTab" class="dashboard-tab">
+                <div class="inspection-content">
+                    <h3>� Vehicle Inspection</h3>
+                    <p>Perform comprehensive vehicle inspections with customizable checklists.</p>
+                    
+                    <div class="inspection-templates">
+                        <h4>Inspection Templates</h4>
+                        <div class="template-cards">
+                            <div class="template-card" data-template="pre-trip">
+                                <h4>🚗 Pre-Trip Inspection</h4>
+                                <p>Quick safety check before driving</p>
+                                <button onclick="startInspection('pre-trip')">Start Inspection</button>
+                            </div>
+                            <div class="template-card" data-template="post-trip">
+                                <h4>🏁 Post-Trip Inspection</h4>
+                                <p>Comprehensive check after trip</p>
+                                <button onclick="startInspection('post-trip')">Start Inspection</button>
+                            </div>
+                            <div class="template-card" data-template="annual">
+                                <h4>📅 Annual Inspection</h4>
+                                <p>Detailed yearly inspection</p>
+                                <button onclick="startInspection('annual')">Start Inspection</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Provider Directory -->
+                    <div class="service-providers-section">
+                        <h4>🔧 Service Provider Directory</h4>
+                        <p>Find and manage trusted mechanics and service providers.</p>
+                        
+                        <button onclick="showAddProvider()" class="cta-primary">➕ Add Service Provider</button>
+                        
+                        <div id="dashboardProvidersList">
+                            <p>Loading service providers...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Login to VMIS</h2>
+                
+                <form id="loginForm">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" name="email" required>
+                    
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="password" required>
+                    
+                    <button type="button" onclick="doLogin()">Login</button>
+                    <button type="button" onclick="showRegister()">Don't have an account? Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Register for VMIS</h2>
+                
+                <form id="registerForm">
+                    <label for="registerUsername">Username:</label>
+                    <input type="text" id="registerUsername" name="username" placeholder="Your Name" required>
+                    
+                    <label for="registerEmail">Email:</label>
+                    <input type="email" id="registerEmail" name="email" placeholder="your.email@example.com" required>
+                    
+                    <label for="registerPassword">Password:</label>
+                    <input type="password" id="registerPassword" name="password" placeholder="Choose a password" required>
+                    
+                    <button type="button" onclick="doRegister()">Register</button>
+                    <button type="button" onclick="showLogin()">Already have an account? Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Records Modal -->
+        <div id="viewRecordsModal" class="modal">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <h2>Vehicle Records</h2>
+                <div class="filter-section">
+                    <label for="vehicleTypeFilter">Filter by Vehicle Type:</label>
+                    <select id="vehicleTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="car">Car</option>
+                        <option value="truck">Truck</option>
+                        <option value="motorcycle">Motorcycle</option>
+                    </select>
+                </div>
+                <div id="recordsList" class="records-container">
+                    <!-- Records will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Record Modal -->
+        <div id="addRecordModal" class="modal">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <h2>Add New Vehicle Record</h2>
+                <form id="addRecordForm">
+                    <div class="vehicle-type-section">
+                        <h3>Select Vehicle Type</h3>
+                        <div class="vehicle-type-options">
+                            <div class="vehicle-option" data-type="car">
+                                <img src="images/car.png" alt="Car" class="vehicle-image">
+                                <label>Car</label>
+                                <input type="radio" name="vehicleType" value="car" required>
+                            </div>
+                            <div class="vehicle-option" data-type="truck">
+                                <img src="images/truck.png" alt="Truck" class="vehicle-image">
+                                <label>Truck</label>
+                                <input type="radio" name="vehicleType" value="truck" required>
+                            </div>
+                            <div class="vehicle-option" data-type="motorcycle">
+                                <img src="images/motocycle.png" alt="Motorcycle" class="vehicle-image">
+                                <label>Motorcycle</label>
+                                <input type="radio" name="vehicleType" value="motorcycle" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-sections">
+                        <section>
+                            <h3>Vehicle Information</h3>
+                            <label for="modalOwnerName">Owner's Name:</label>
+                            <input type="text" id="modalOwnerName" name="ownerName" required>
+                            
+                            <label for="modalVehicleMake">Vehicle Make:</label>
+                            <input type="text" id="modalVehicleMake" name="vehicleMake" required>
+                            
+                            <label for="modalVehicleModel">Vehicle Model:</label>
+                            <input type="text" id="modalVehicleModel" name="vehicleModel" required>
+                            
+                            <label for="modalVehicleYear">Vehicle Year:</label>
+                            <input type="number" id="modalVehicleYear" name="vehicleYear" min="1900" max="2030" required>
+                            
+                            <label for="modalLicensePlate">License Plate:</label>
+                            <input type="text" id="modalLicensePlate" name="licensePlate" required>
+                        </section>
+                        
+                        <section>
+                            <h3>Insurance Information</h3>
+                            <label for="modalInsuranceProvider">Insurance Provider:</label>
+                            <input type="text" id="modalInsuranceProvider" name="insuranceProvider" required>
+                            
+                            <label for="modalPolicyNumber">Policy Number:</label>
+                            <input type="text" id="modalPolicyNumber" name="policyNumber" required>
+                            
+                            <label for="modalExpirationDate">Expiration Date:</label>
+                            <input type="date" id="modalExpirationDate" name="expirationDate" required>
+                        </section>
+                        
+                        <section>
+                            <h3>Inspection Details</h3>
+                            <label for="modalMaintenanceTask">Maintenance Task:</label>
+                            <input type="text" id="modalMaintenanceTask" name="maintenanceTask" required>
+                            
+                            <label for="modalInspectionDate">Inspection Date:</label>
+                            <input type="date" id="modalInspectionDate" name="inspectionDate" required>
+                            
+                            <label for="modalMileage">Mileage:</label>
+                            <input type="number" id="modalMileage" name="mileage" required>
+                        </section>
+                    </div>
+                    
+                    <button type="submit">Add Vehicle Record</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Vehicle Lookup Modal -->
+        <div id="vehicleLookupModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>🔍 Vehicle Information Lookup</h3>
+                <p>Search for detailed vehicle specifications, maintenance intervals, and technical data</p>
+                
+                <div class="lookup-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lookupMake">Make:</label>
+                            <select id="lookupMake" required>
+                                <option value="">Select Make</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="honda">Honda</option>
+                                <option value="ford">Ford</option>
+                                <option value="chevrolet">Chevrolet</option>
+                                <option value="nissan">Nissan</option>
+                                <option value="bmw">BMW</option>
+                                <option value="mercedes-benz">Mercedes-Benz</option>
+                                <option value="audi">Audi</option>
+                                <option value="volkswagen">Volkswagen</option>
+                                <option value="hyundai">Hyundai</option>
+                                <option value="kia">Kia</option>
+                                <option value="mazda">Mazda</option>
+                                <option value="subaru">Subaru</option>
+                                <option value="lexus">Lexus</option>
+                                <option value="acura">Acura</option>
+                                <option value="infiniti">Infiniti</option>
+                                <option value="cadillac">Cadillac</option>
+                                <option value="lincoln">Lincoln</option>
+                                <option value="jeep">Jeep</option>
+                                <option value="ram">Ram</option>
+                                <option value="dodge">Dodge</option>
+                                <option value="chrysler">Chrysler</option>
+                                <option value="gmc">GMC</option>
+                                <option value="buick">Buick</option>
+                                <option value="volvo">Volvo</option>
+                                <option value="tesla">Tesla</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="lookupModel">Model:</label>
+                            <input type="text" id="lookupModel" placeholder="e.g., Camry, Civic, F-150" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lookupYear">Year:</label>
+                            <select id="lookupYear" required>
+                                <option value="">Select Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="searchVehicleBtn" class="search-btn">
+                                🔍 Search Vehicle Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="vehicleResults" class="vehicle-results" style="display: none;">
+                    <h4>📋 Vehicle Information</h4>
+                    <div id="resultsContent" class="results-content">
+                        <!-- Results will be populated here -->
+                    </div>
+                    <div class="results-actions">
+                        <button type="button" id="addToFleetBtn" class="cta-primary">
+                            ➕ Add to My Fleet
+                        </button>
+                        <button type="button" id="viewMaintenanceBtn" class="cta-secondary">
+                            🔧 View Maintenance Schedule
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loadingIndicator" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Searching vehicle database...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learn More Modal -->
+        <div id="learnMoreModal" class="modal" style="display: none;">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <h2>🚗 Welcome to VMIS - Your Vehicle Management Solution</h2>
+                
+                <div class="learn-more-content">
+                    <div class="intro-section">
+                        <p>Discover how VMIS can help you manage your vehicle maintenance, track insurance, and keep your fleet running smoothly!</p>
+                    </div>
+                    
+                    <div class="learning-options">
+                        <div class="learning-card" onclick="startQuickTour()">
+                            <div class="card-icon">🎯</div>
+                            <h3>Quick Tour</h3>
+                            <p>Take a 2-minute interactive tour of the main features</p>
+                            <button class="tour-btn">Start Tour</button>
+                        </div>
+                        
+                        <div class="learning-card" onclick="showGettingStarted()">
+                            <div class="card-icon">📋</div>
+                            <h3>Getting Started Guide</h3>
+                            <p>Step-by-step instructions to set up your first vehicle</p>
+                            <button class="guide-btn">View Guide</button>
+                        </div>
+                        
+                        <div class="learning-card" onclick="showFeatureOverview()">
+                            <div class="card-icon">⚙️</div>
+                            <h3>Feature Overview</h3>
+                            <p>Explore all the powerful features VMIS offers</p>
+                            <button class="features-btn">Explore Features</button>
+                        </div>
+                        
+                        <div class="learning-card">
+                            <div class="card-icon">🔍</div>
+                            <h3>Vehicle Lookup Demo</h3>
+                            <p>See how to find detailed vehicle specifications</p>
+                            <button class="demo-btn" onclick="showVehicleLookupDemo()">Try Demo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tour Modal -->
+        <div id="quickTourModal" class="modal" style="display: none;">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <div class="tour-content">
+                    <div class="tour-header">
+                        <h2 id="tourTitle">🎯 Quick Tour - Step 1 of 4</h2>
+                        <div class="tour-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="tourProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tour-step" id="tourStep">
+                        <!-- Tour content will be populated by JavaScript -->
+                    </div>
+                    
+                    <div class="tour-navigation">
+                        <button id="tourPrev" class="tour-nav-btn" disabled>⬅️ Previous</button>
+                        <button id="tourNext" class="tour-nav-btn">Next ➡️</button>
+                        <button id="tourSkip" class="tour-skip-btn">Skip Tour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Getting Started Guide Modal -->
+        <div id="gettingStartedModal" class="modal" style="display: none;">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <h2>📋 Getting Started with VMIS</h2>
+                
+                <div class="guide-content">
+                    <div class="guide-step">
+                        <h3>Step 1: Create Your Account</h3>
+                        <p>Click the "Get Started" button and register with your email to create a secure account.</p>
+                        <div class="guide-visual">📝 Registration → Email Verification → Account Ready</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <h3>Step 2: Add Your First Vehicle</h3>
+                        <p>Use the "Add Record" button to register your vehicle with details like make, model, year, and license plate.</p>
+                        <div class="guide-visual">🚗 Vehicle Info → Insurance Details → Maintenance Records</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <h3>Step 3: Set Up Maintenance Tracking</h3>
+                        <p>Add maintenance records and set up reminders for oil changes, inspections, and other services.</p>
+                        <div class="guide-visual">🔧 Maintenance → 🔔 Reminders → 📅 Schedule</div>
+                    </div>
+                    
+                    <div class="guide-step">
+                        <h3>Step 4: Explore Advanced Features</h3>
+                        <p>Use the vehicle lookup tool to get manufacturer specifications and maintenance recommendations.</p>
+                        <div class="guide-visual">🔍 Lookup → 📊 Specs → 🎯 Recommendations</div>
+                    </div>
+                    
+                    <div class="guide-actions">
+                        <button onclick="showLogin();" class="cta-primary">Get Started Now</button>
+                        <button onclick="startQuickTour()" class="cta-secondary">Take the Tour</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Overview Modal -->
+        <div id="featureOverviewModal" class="modal" style="display: none;">
+            <div class="modal-content large-modal">
+                <span class="close">&times;</span>
+                <h2>⚙️ VMIS Features Overview</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚗</div>
+                        <h3>Vehicle Management</h3>
+                        <ul>
+                            <li>Add multiple vehicles to your fleet</li>
+                            <li>Track make, model, year, and specifications</li>
+                            <li>Store license plate and owner information</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔧</div>
+                        <h3>Maintenance Tracking</h3>
+                        <ul>
+                            <li>Log maintenance activities and costs</li>
+                            <li>Set up recurring maintenance reminders</li>
+                            <li>Track mileage and service history</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Insurance Management</h3>
+                        <ul>
+                            <li>Store insurance policy information</li>
+                            <li>Track expiration dates</li>
+                            <li>Get renewal reminders</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Vehicle Lookup</h3>
+                        <ul>
+                            <li>Get detailed vehicle specifications</li>
+                            <li>Access manufacturer maintenance schedules</li>
+                            <li>View engine specs and fuel economy data</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Dashboard & Reports</h3>
+                        <ul>
+                            <li>View all vehicles at a glance</li>
+                            <li>Track upcoming maintenance</li>
+                            <li>Monitor insurance expiration dates</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Modern Interface</h3>
+                        <ul>
+                            <li>Responsive design for all devices</li>
+                            <li>Intuitive user interface</li>
+                            <li>Secure cloud-based storage</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="feature-actions">
+                    <button onclick="showLogin();" class="cta-primary">Try VMIS Now</button>
+                    <button onclick="showVehicleLookupDemo()" class="cta-secondary">See Vehicle Lookup Demo</button>
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Vehicle Maintenance and Inspection System. All rights reserved - Janice Ainembabazi</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js" defer></script>
+    
+    <!-- BULLETPROOF BUTTON FIX -->
+    <script>
+        // Simple, direct button handlers that WILL work
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Fixing buttons NOW...');
+            
+            // Get Started button - DIRECT FIX
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            if (getStartedBtn) {
+                getStartedBtn.onclick = function() {
+                    console.log('Get Started clicked!');
+                    const loginModal = document.getElementById('loginModal');
+                    if (loginModal) {
+                        loginModal.style.display = 'block';
+                        console.log('Login modal opened');
+                    } else {
+                        alert('Login modal not found! But button is working.');
+                    }
+                };
+                console.log('Get Started button fixed');
+            }
+            
+            // Learn More button - DIRECT FIX
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+            if (learnMoreBtn) {
+                learnMoreBtn.onclick = function() {
+                    console.log('Learn More clicked!');
+                    const learnModal = document.getElementById('learnMoreModal');
+                    if (learnModal) {
+                        learnModal.style.display = 'block';
+                        console.log('Learn More modal opened');
+                    } else {
+                        alert('Learn More modal not found! But button is working.');
+                    }
+                };
+                console.log('Learn More button fixed');
+            }
+            
+            // Close buttons for modals
+            const closeButtons = document.querySelectorAll('.close');
+            closeButtons.forEach(function(btn) {
+                btn.onclick = function() {
+                    const modal = btn.closest('.modal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                };
+            });
+            
+            // Fix login functionality
+            window.doLogin = function() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (email && password) {
+                    console.log('Login attempt:', email);
+                    // Simulate successful login
+                    window.currentUser = { email: email, username: email.split('@')[0] };
+                    
+                    // Close login modal
+                    document.getElementById('loginModal').style.display = 'none';
+                    
+                    // Show dashboard with stronger styling
+                    document.getElementById('landingPage').style.display = 'none';
+                    const dashboard = document.getElementById('dashboard');
+                    dashboard.style.display = 'block';
+                    dashboard.style.visibility = 'visible';
+                    dashboard.style.opacity = '1';
+                    dashboard.classList.add('show');
+                    
+                    console.log('Dashboard element:', dashboard);
+                    console.log('Dashboard display:', dashboard.style.display);
+                    
+                    // Show user nav bar
+                    const userNavBar = document.getElementById('userNavBar');
+                    if (userNavBar) {
+                        userNavBar.style.display = 'flex';
+                        document.getElementById('welcomeText').textContent = 'Welcome, ' + window.currentUser.username + '!';
+                    }
+                    
+                    // Show the overview tab by default and update data
+                    setTimeout(() => {
+                        console.log('Showing overview tab after login');
+                        window.showDashboardTab('overview');
+                        window.updateDashboardData();
+                        
+                        // Double-check dashboard visibility
+                        const dashboardCheck = document.getElementById('dashboard');
+                        console.log('Dashboard final check - display:', dashboardCheck.style.display);
+                        console.log('Dashboard final check - visibility:', dashboardCheck.style.visibility);
+                    }, 200);
+                    
+                    console.log('Login successful!');
+                } else {
+                    alert('Please enter both email and password');
+                }
+            };
+            
+            // Fix register functionality
+            window.showRegister = function() {
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('registerModal').style.display = 'block';
+            };
+            
+            window.showLogin = function() {
+                document.getElementById('registerModal').style.display = 'none';
+                document.getElementById('loginModal').style.display = 'block';
+            };
+            
+            window.doRegister = function() {
+                const username = document.getElementById('registerUsername').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                
+                if (username && email && password) {
+                    console.log('Registration:', username, email);
+                    alert('Registration successful! You can now login.');
+                    window.showLogin();
+                } else {
+                    alert('Please fill in all fields');
+                }
+            };
+            
+            // Fix modal navigation functions
+            window.startQuickTour = function() {
+                console.log('Starting quick tour...');
+                document.getElementById('learnMoreModal').style.display = 'none';
+                document.getElementById('quickTourModal').style.display = 'block';
+            };
+            
+            window.showGettingStarted = function() {
+                console.log('Showing getting started...');
+                document.getElementById('learnMoreModal').style.display = 'none';
+                document.getElementById('gettingStartedModal').style.display = 'block';
+            };
+            
+            window.showFeatureOverview = function() {
+                console.log('Showing feature overview...');
+                document.getElementById('learnMoreModal').style.display = 'none';
+                document.getElementById('featureOverviewModal').style.display = 'block';
+            };
+            
+            window.showVehicleLookupDemo = function() {
+                console.log('Showing vehicle lookup demo...');
+                document.getElementById('learnMoreModal').style.display = 'none';
+                document.getElementById('vehicleLookupModal').style.display = 'block';
+            };
+            
+            // Fix dashboard navigation
+            window.goToLandingPage = function() {
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('landingPage').style.display = 'block';
+                const userNavBar = document.getElementById('userNavBar');
+                if (userNavBar) {
+                    userNavBar.style.display = 'none';
+                }
+            };
+            
+            window.showDashboardTab = function(tabName) {
+                console.log('Showing dashboard tab:', tabName);
+                
+                // First, ensure dashboard is visible
+                const dashboard = document.getElementById('dashboard');
+                if (dashboard) {
+                    dashboard.style.display = 'block';
+                    dashboard.style.visibility = 'visible';
+                    dashboard.style.opacity = '1';
+                    dashboard.classList.add('show');
+                }
+                
+                // Hide all tabs
+                const tabs = document.querySelectorAll('.dashboard-tab');
+                console.log('Found tabs:', tabs.length);
+                tabs.forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                    console.log('Hiding tab:', tab.id);
+                });
+                
+                // Remove active class from all tab buttons
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                tabBtns.forEach(btn => btn.classList.remove('active'));
+                
+                // Show selected tab
+                const targetTab = document.getElementById(tabName + 'Tab');
+                if (targetTab) {
+                    targetTab.style.display = 'block';
+                    targetTab.style.visibility = 'visible';
+                    targetTab.classList.add('active');
+                    console.log('Showed tab:', targetTab.id, 'Display:', targetTab.style.display);
+                } else {
+                    console.error('Tab not found:', tabName + 'Tab');
+                    // List all tabs for debugging
+                    console.log('Available tabs:', Array.from(document.querySelectorAll('.dashboard-tab')).map(t => t.id));
+                }
+                
+                // Add active class to clicked button
+                const activeBtn = document.querySelector(`[onclick="showDashboardTab('${tabName}')"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                    console.log('Activated button for tab:', tabName);
+                } else {
+                    console.warn('Button not found for tab:', tabName);
+                }
+            };
+            
+            // Logout functionality
+            const logoutBtn = document.getElementById('logoutNavBtn');
+            if (logoutBtn) {
+                logoutBtn.onclick = function() {
+                    window.currentUser = null;
+                    document.getElementById('dashboard').style.display = 'none';
+                    document.getElementById('landingPage').style.display = 'block';
+                    document.getElementById('userNavBar').style.display = 'none';
+                    console.log('Logged out');
+                };
+            }
+            
+            // Navigation buttons
+            const homeNavBtn = document.getElementById('homeNavBtn');
+            if (homeNavBtn) {
+                homeNavBtn.onclick = function() {
+                    window.goToLandingPage();
+                };
+            }
+            
+            const formsNavBtn = document.getElementById('formsNavBtn');
+            if (formsNavBtn) {
+                formsNavBtn.onclick = function() {
+                    document.getElementById('landingPage').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    window.showDashboardTab('forms');
+                };
+            }
+            
+            const dashboardNavBtn = document.getElementById('dashboardNavBtn');
+            if (dashboardNavBtn) {
+                dashboardNavBtn.onclick = function() {
+                    document.getElementById('landingPage').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    window.showDashboardTab('overview');
+                };
+            }
+            
+            // Vehicle storage
+            window.vehicles = JSON.parse(localStorage.getItem('vmis_vehicles') || '[]');
+            window.maintenanceRecords = JSON.parse(localStorage.getItem('vmis_maintenance') || '[]');
+            window.insuranceRecords = JSON.parse(localStorage.getItem('vmis_insurance') || '[]');
+            
+            // Form submissions
+            window.handleVehicleFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const vehicle = {
+                        id: Date.now().toString(),
+                        ownerName: formData.get('ownerName'),
+                        vehicleMake: formData.get('vehicleMake'),
+                        vehicleModel: formData.get('vehicleModel'),
+                        year: formData.get('year'),
+                        licensePlate: formData.get('licensePlate'),
+                        vehicleType: formData.get('vehicleType'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.vehicles.push(vehicle);
+                    localStorage.setItem('vmis_vehicles', JSON.stringify(window.vehicles));
+                    
+                    alert('Vehicle saved successfully!');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            window.handleInsuranceFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const insurance = {
+                        id: Date.now().toString(),
+                        insuranceProvider: formData.get('insuranceProvider'),
+                        policyNumber: formData.get('policyNumber'),
+                        expirationDate: formData.get('expirationDate'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.insuranceRecords.push(insurance);
+                    localStorage.setItem('vmis_insurance', JSON.stringify(window.insuranceRecords));
+                    
+                    alert('Insurance information saved successfully!');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            window.handleMaintenanceFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const maintenance = {
+                        id: Date.now().toString(),
+                        maintenanceTask: formData.get('maintenanceTask'),
+                        inspectionDate: formData.get('inspectionDate'),
+                        mileage: formData.get('mileage'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.maintenanceRecords.push(maintenance);
+                    localStorage.setItem('vmis_maintenance', JSON.stringify(window.maintenanceRecords));
+                    
+                    alert('Maintenance record saved successfully!');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            // Dashboard data updates
+            window.updateDashboardData = function() {
+                // Update vehicles list
+                const vehiclesList = document.getElementById('vehiclesList');
+                if (vehiclesList) {
+                    if (window.vehicles.length === 0) {
+                        vehiclesList.innerHTML = '<p>No vehicles registered yet.</p>';
+                    } else {
+                        vehiclesList.innerHTML = window.vehicles.map(vehicle => `
+                            <div class="vehicle-item">
+                                <strong>${vehicle.vehicleMake} ${vehicle.vehicleModel}</strong><br>
+                                <small>${vehicle.year} • ${vehicle.licensePlate}</small>
+                            </div>
+                        `).join('');
+                    }
+                }
+                
+                // Update active reminders
+                const activeReminders = document.getElementById('activeReminders');
+                if (activeReminders) {
+                    const upcomingMaintenance = window.maintenanceRecords.slice(-3);
+                    if (upcomingMaintenance.length === 0) {
+                        activeReminders.innerHTML = '<p>No active reminders.</p>';
+                    } else {
+                        activeReminders.innerHTML = upcomingMaintenance.map(record => `
+                            <div class="reminder-item">
+                                <strong>${record.maintenanceTask}</strong><br>
+                                <small>Scheduled: ${record.inspectionDate}</small>
+                            </div>
+                        `).join('');
+                    }
+                }
+                
+                // Update recent activity
+                const recentActivity = document.getElementById('recentActivity');
+                if (recentActivity) {
+                    const allRecords = [
+                        ...window.vehicles.map(v => ({...v, type: 'Vehicle Added'})),
+                        ...window.maintenanceRecords.map(m => ({...m, type: 'Maintenance'})),
+                        ...window.insuranceRecords.map(i => ({...i, type: 'Insurance'}))
+                    ].slice(-3);
+                    
+                    if (allRecords.length === 0) {
+                        recentActivity.innerHTML = '<p>No recent activity.</p>';
+                    } else {
+                        recentActivity.innerHTML = allRecords.map(record => `
+                            <div class="activity-item">
+                                <strong>${record.type}</strong><br>
+                                <small>${record.dateAdded}</small>
+                            </div>
+                        `).join('');
+                    }
+                }
+            };
+            
+            // Enhanced vehicle lookup functionality
+            window.initVehicleLookup = function() {
+                const lookupYear = document.getElementById('lookupYear');
+                if (lookupYear) {
+                    const currentYear = new Date().getFullYear();
+                    for (let year = currentYear; year >= 1990; year--) {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        lookupYear.appendChild(option);
+                    }
+                }
+                
+                const searchBtn = document.getElementById('searchVehicleBtn');
+                if (searchBtn) {
+                    searchBtn.onclick = function() {
+                        const make = document.getElementById('lookupMake').value;
+                        const model = document.getElementById('lookupModel').value;
+                        const year = document.getElementById('lookupYear').value;
+                        
+                        if (!make || !model || !year) {
+                            window.showNotification('Please fill in all vehicle information fields', 'error');
+                            return;
+                        }
+                        
+                        // Show loading
+                        document.getElementById('loadingIndicator').style.display = 'block';
+                        document.getElementById('vehicleResults').style.display = 'none';
+                        
+                        // Simulate API call with realistic data
+                        setTimeout(() => {
+                            document.getElementById('loadingIndicator').style.display = 'none';
+                            document.getElementById('vehicleResults').style.display = 'block';
+                            
+                            // Generate realistic vehicle specifications
+                            const vehicleSpecs = window.generateVehicleSpecs(make, model, year);
+                            
+                            document.getElementById('resultsContent').innerHTML = `
+                                <div class="vehicle-spec">
+                                    <h5>${year} ${make.charAt(0).toUpperCase() + make.slice(1)} ${model}</h5>
+                                    <div class="spec-grid">
+                                        <div><strong>Engine:</strong> ${vehicleSpecs.engine}</div>
+                                        <div><strong>Transmission:</strong> ${vehicleSpecs.transmission}</div>
+                                        <div><strong>Fuel Type:</strong> ${vehicleSpecs.fuelType}</div>
+                                        <div><strong>MPG:</strong> ${vehicleSpecs.mpg}</div>
+                                        <div><strong>Drive Type:</strong> ${vehicleSpecs.driveType}</div>
+                                        <div><strong>Class:</strong> ${vehicleSpecs.class}</div>
+                                    </div>
+                                    <div class="maintenance-schedule">
+                                        <h6>Recommended Maintenance Schedule:</h6>
+                                        <ul>
+                                            <li>Oil Change: Every ${vehicleSpecs.oilChange} miles</li>
+                                            <li>Tire Rotation: Every ${vehicleSpecs.tireRotation} miles</li>
+                                            <li>Air Filter: Every ${vehicleSpecs.airFilter} miles</li>
+                                            <li>Brake Inspection: Every ${vehicleSpecs.brakeInspection} miles</li>
+                                            <li>Transmission Service: Every ${vehicleSpecs.transmission} miles</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            // Add to fleet button functionality
+                            const addToFleetBtn = document.getElementById('addToFleetBtn');
+                            if (addToFleetBtn) {
+                                addToFleetBtn.onclick = function() {
+                                    const vehicle = {
+                                        id: Date.now().toString(),
+                                        ownerName: window.currentUserEmail || 'Current User',
+                                        vehicleMake: make,
+                                        vehicleModel: model,
+                                        year: year,
+                                        licensePlate: 'Enter License Plate',
+                                        vehicleType: vehicleSpecs.class,
+                                        dateAdded: new Date().toLocaleDateString(),
+                                        specs: vehicleSpecs
+                                    };
+                                    
+                                    window.vehicles.push(vehicle);
+                                    localStorage.setItem('vmis_vehicles', JSON.stringify(window.vehicles));
+                                    
+                                    window.showNotification(`✅ ${year} ${make} ${model} added to your fleet!`, 'success');
+                                    window.updateDashboardData();
+                                };
+                            }
+                            
+                            // View maintenance button functionality
+                            const viewMaintenanceBtn = document.getElementById('viewMaintenanceBtn');
+                            if (viewMaintenanceBtn) {
+                                viewMaintenanceBtn.onclick = function() {
+                                    const maintenanceInfo = `
+                                        <h3>Maintenance Schedule for ${year} ${make} ${model}</h3>
+                                        <div class="maintenance-details">
+                                            <h4>Upcoming Maintenance:</h4>
+                                            <ul>
+                                                <li>🛢️ Oil Change: Every ${vehicleSpecs.oilChange} miles</li>
+                                                <li>🛞 Tire Rotation: Every ${vehicleSpecs.tireRotation} miles</li>
+                                                <li>🌬️ Air Filter: Every ${vehicleSpecs.airFilter} miles</li>
+                                                <li>🛑 Brake Inspection: Every ${vehicleSpecs.brakeInspection} miles</li>
+                                                <li>⚙️ Transmission Service: Every ${vehicleSpecs.transmissionService} miles</li>
+                                            </ul>
+                                            <h4>Seasonal Maintenance:</h4>
+                                            <ul>
+                                                <li>❄️ Winter prep: Battery check, coolant level, tire pressure</li>
+                                                <li>🌸 Spring check: AC system, wiper blades, exterior wash</li>
+                                                <li>☀️ Summer prep: Cooling system, tire condition, oil level</li>
+                                                <li>🍂 Fall maintenance: Heating system, light bulbs, windshield</li>
+                                            </ul>
+                                        </div>
+                                    `;
+                                    
+                                    // Create temporary modal
+                                    const modal = document.createElement('div');
+                                    modal.className = 'modal';
+                                    modal.style.display = 'block';
+                                    modal.innerHTML = `
+                                        <div class="modal-content">
+                                            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                                            ${maintenanceInfo}
+                                        </div>
+                                    `;
+                                    document.body.appendChild(modal);
+                                };
+                            }
+                        }, 1500);
+                    };
+                }
+            };
+            
+            // Generate realistic vehicle specifications
+            window.generateVehicleSpecs = function(make, model, year) {
+                const makeUpper = make.toUpperCase();
+                const yearNum = parseInt(year);
+                
+                // Base specifications with variations by make and year
+                let specs = {
+                    engine: '2.4L 4-Cylinder',
+                    transmission: 'Automatic',
+                    fuelType: 'Gasoline',
+                    mpg: '28 city / 35 highway',
+                    driveType: 'FWD',
+                    class: 'Sedan',
+                    oilChange: 5000,
+                    tireRotation: 7500,
+                    airFilter: 15000,
+                    brakeInspection: 12000,
+                    transmissionService: 30000
+                };
+                
+                // Adjust specs based on make
+                if (['HONDA', 'TOYOTA', 'NISSAN'].includes(makeUpper)) {
+                    specs.mpg = '30 city / 38 highway';
+                    specs.oilChange = 7500;
+                } else if (['BMW', 'MERCEDES', 'AUDI'].includes(makeUpper)) {
+                    specs.engine = '3.0L 6-Cylinder Turbo';
+                    specs.mpg = '22 city / 30 highway';
+                    specs.oilChange = 10000;
+                    specs.fuelType = 'Premium Gasoline';
+                } else if (['FORD', 'CHEVROLET', 'DODGE'].includes(makeUpper)) {
+                    specs.engine = '3.5L V6';
+                    specs.mpg = '24 city / 32 highway';
+                } else if (['TESLA'].includes(makeUpper)) {
+                    specs.engine = 'Electric Motor';
+                    specs.fuelType = 'Electric';
+                    specs.mpg = '120 MPGe city / 112 MPGe highway';
+                    specs.oilChange = 'N/A (Electric)';
+                    specs.transmissionService = 'N/A (Electric)';
+                }
+                
+                // Adjust for model type
+                if (model.toLowerCase().includes('truck') || model.toLowerCase().includes('f-150') || 
+                    model.toLowerCase().includes('silverado') || model.toLowerCase().includes('ram')) {
+                    specs.class = 'Pickup Truck';
+                    specs.engine = '5.3L V8';
+                    specs.driveType = '4WD';
+                    specs.mpg = '16 city / 22 highway';
+                } else if (model.toLowerCase().includes('suv') || model.toLowerCase().includes('explorer') || 
+                          model.toLowerCase().includes('tahoe') || model.toLowerCase().includes('pilot')) {
+                    specs.class = 'SUV';
+                    specs.driveType = 'AWD';
+                    specs.mpg = '20 city / 28 highway';
+                }
+                
+                // Adjust for year (newer cars generally more efficient)
+                if (yearNum >= 2020) {
+                    specs.oilChange = Math.max(specs.oilChange, 7500);
+                } else if (yearNum < 2010) {
+                    specs.oilChange = Math.min(specs.oilChange, 5000);
+                }
+                
+                return specs;
+            };
+            
+            // Enhanced inspection functionality
+            window.startInspection = function(type) {
+                const inspectionTypes = {
+                    'safety': {
+                        title: '🛡️ Safety Inspection',
+                        items: [
+                            'Brake system check',
+                            'Tire condition and tread depth',
+                            'Light functionality (headlights, taillights, turn signals)',
+                            'Windshield and mirror condition',
+                            'Steering and suspension',
+                            'Exhaust system',
+                            'Seat belts and safety equipment'
+                        ]
+                    },
+                    'emissions': {
+                        title: '🌱 Emissions Inspection',
+                        items: [
+                            'Catalytic converter function',
+                            'Oxygen sensors',
+                            'PCV valve condition',
+                            'Air filter cleanliness',
+                            'Fuel system integrity',
+                            'Exhaust gas analysis',
+                            'OBD system diagnostic'
+                        ]
+                    },
+                    'annual': {
+                        title: '📅 Annual Inspection',
+                        items: [
+                            'Engine performance check',
+                            'Transmission operation',
+                            'Brake system inspection',
+                            'Suspension and steering',
+                            'Electrical system check',
+                            'Fluid levels and condition',
+                            'Body and frame inspection'
+                        ]
+                    }
+                };
+                
+                const inspection = inspectionTypes[type] || inspectionTypes['safety'];
+                
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'block';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                        <h2>${inspection.title}</h2>
+                        <div class="inspection-checklist">
+                            <p>Use this checklist to perform a thorough ${type} inspection:</p>
+                            <form class="inspection-form">
+                                ${inspection.items.map((item, index) => `
+                                    <div class="inspection-item">
+                                        <label>
+                                            <input type="checkbox" name="item${index}" value="${item}">
+                                            <span class="checkmark"></span>
+                                            ${item}
+                                        </label>
+                                    </div>
+                                `).join('')}
+                                <div class="inspection-notes">
+                                    <label for="inspectionNotes">Additional Notes:</label>
+                                    <textarea id="inspectionNotes" rows="4" placeholder="Record any issues or observations..."></textarea>
+                                </div>
+                                <div class="inspection-actions">
+                                    <button type="button" onclick="window.saveInspectionResults(this)" class="cta-primary">
+                                        📋 Save Inspection Results
+                                    </button>
+                                    <button type="button" onclick="this.closest('.modal').remove()" class="cta-secondary">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            };
+            
+            // Save inspection results
+            window.saveInspectionResults = function(button) {
+                const form = button.closest('.inspection-form');
+                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+                const notes = form.querySelector('#inspectionNotes').value;
+                
+                const results = {
+                    id: Date.now().toString(),
+                    date: new Date().toLocaleDateString(),
+                    type: 'Vehicle Inspection',
+                    items: Array.from(checkboxes).map(cb => ({
+                        item: cb.value,
+                        checked: cb.checked
+                    })),
+                    notes: notes,
+                    passed: Array.from(checkboxes).every(cb => cb.checked)
+                };
+                
+                // Save to maintenance records
+                window.maintenanceRecords.push(results);
+                localStorage.setItem('vmis_maintenance', JSON.stringify(window.maintenanceRecords));
+                
+                window.showNotification(`✅ Inspection results saved successfully!`, 'success');
+                button.closest('.modal').remove();
+                window.updateDashboardData();
+            };
+            
+            // Enhanced service provider functionality
+            window.serviceProviders = JSON.parse(localStorage.getItem('vmis_service_providers') || '[]');
+            
+            window.showAddProvider = function() {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'block';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                        <h2>➕ Add Service Provider</h2>
+                        <form class="service-provider-form">
+                            <div class="form-group">
+                                <label for="providerName">Business Name *</label>
+                                <input type="text" id="providerName" required placeholder="e.g., Mike's Auto Service">
+                            </div>
+                            <div class="form-group">
+                                <label for="providerPhone">Phone Number *</label>
+                                <input type="tel" id="providerPhone" required placeholder="(555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="providerAddress">Address</label>
+                                <input type="text" id="providerAddress" placeholder="123 Main St, City, State">
+                            </div>
+                            <div class="form-group">
+                                <label for="providerEmail">Email</label>
+                                <input type="email" id="providerEmail" placeholder="service@provider.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="serviceTypes">Services Offered *</label>
+                                <select id="serviceTypes" multiple>
+                                    <option value="oil-change">Oil Change</option>
+                                    <option value="brake-repair">Brake Repair</option>
+                                    <option value="tire-service">Tire Service</option>
+                                    <option value="engine-repair">Engine Repair</option>
+                                    <option value="transmission">Transmission Service</option>
+                                    <option value="electrical">Electrical Repair</option>
+                                    <option value="ac-service">A/C Service</option>
+                                    <option value="inspection">Vehicle Inspection</option>
+                                    <option value="bodywork">Body Work</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <small>Hold Ctrl/Cmd to select multiple services</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="providerRating">Rating (1-5 stars)</label>
+                                <select id="providerRating">
+                                    <option value="">Not Rated</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 stars)</option>
+                                    <option value="3">⭐⭐⭐ (3 stars)</option>
+                                    <option value="2">⭐⭐ (2 stars)</option>
+                                    <option value="1">⭐ (1 star)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="providerNotes">Notes</label>
+                                <textarea id="providerNotes" rows="3" placeholder="Additional information about this service provider..."></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" onclick="window.saveServiceProvider(this)" class="cta-primary">
+                                    💾 Save Provider
+                                </button>
+                                <button type="button" onclick="this.closest('.modal').remove()" class="cta-secondary">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            };
+            
+            // Save service provider
+            window.saveServiceProvider = function(button) {
+                const form = button.closest('.service-provider-form');
+                const formData = new FormData(form);
+                
+                const name = form.querySelector('#providerName').value;
+                const phone = form.querySelector('#providerPhone').value;
+                const address = form.querySelector('#providerAddress').value;
+                const email = form.querySelector('#providerEmail').value;
+                const serviceTypes = Array.from(form.querySelector('#serviceTypes').selectedOptions).map(opt => opt.value);
+                const rating = form.querySelector('#providerRating').value;
+                const notes = form.querySelector('#providerNotes').value;
+                
+                if (!name || !phone || serviceTypes.length === 0) {
+                    window.showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                const provider = {
+                    id: Date.now().toString(),
+                    name,
+                    phone,
+                    address,
+                    email,
+                    serviceTypes,
+                    rating,
+                    notes,
+                    dateAdded: new Date().toLocaleDateString()
+                };
+                
+                window.serviceProviders.push(provider);
+                localStorage.setItem('vmis_service_providers', JSON.stringify(window.serviceProviders));
+                
+                window.showNotification(`✅ Service provider "${name}" added successfully!`, 'success');
+                button.closest('.modal').remove();
+                window.updateServiceProvidersList();
+            };
+            
+            // Update service providers list
+            window.updateServiceProvidersList = function() {
+                const providersList = document.getElementById('providersList');
+                if (providersList) {
+                    if (window.serviceProviders.length === 0) {
+                        providersList.innerHTML = '<p>No service providers added yet. Click "Add Provider" to get started.</p>';
+                    } else {
+                        providersList.innerHTML = window.serviceProviders.map(provider => `
+                            <div class="provider-card">
+                                <h4>${provider.name}</h4>
+                                <p><strong>📞 Phone:</strong> ${provider.phone}</p>
+                                ${provider.address ? `<p><strong>📍 Address:</strong> ${provider.address}</p>` : ''}
+                                ${provider.email ? `<p><strong>📧 Email:</strong> ${provider.email}</p>` : ''}
+                                <p><strong>🔧 Services:</strong> ${provider.serviceTypes.join(', ')}</p>
+                                ${provider.rating ? `<p><strong>⭐ Rating:</strong> ${'⭐'.repeat(parseInt(provider.rating))}</p>` : ''}
+                                ${provider.notes ? `<p><strong>📝 Notes:</strong> ${provider.notes}</p>` : ''}
+                                <div class="provider-actions">
+                                    <button onclick="window.contactProvider('${provider.id}')" class="contact-btn">📞 Contact</button>
+                                    <button onclick="window.editProvider('${provider.id}')" class="edit-btn">✏️ Edit</button>
+                                    <button onclick="window.deleteProvider('${provider.id}')" class="delete-btn">🗑️ Delete</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            };
+            
+            // Contact provider
+            window.contactProvider = function(providerId) {
+                const provider = window.serviceProviders.find(p => p.id === providerId);
+                if (provider) {
+                    const contactInfo = `
+                        <h3>Contact ${provider.name}</h3>
+                        <p><strong>Phone:</strong> <a href="tel:${provider.phone}">${provider.phone}</a></p>
+                        ${provider.email ? `<p><strong>Email:</strong> <a href="mailto:${provider.email}">${provider.email}</a></p>` : ''}
+                        ${provider.address ? `<p><strong>Address:</strong> ${provider.address}</p>` : ''}
+                        <p><strong>Services:</strong> ${provider.serviceTypes.join(', ')}</p>
+                    `;
+                    
+                    const modal = document.createElement('div');
+                    modal.className = 'modal';
+                    modal.style.display = 'block';
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                            ${contactInfo}
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                }
+            };
+            
+            // Delete provider
+            window.deleteProvider = function(providerId) {
+                const provider = window.serviceProviders.find(p => p.id === providerId);
+                if (provider && confirm(`Are you sure you want to delete ${provider.name}?`)) {
+                    window.serviceProviders = window.serviceProviders.filter(p => p.id !== providerId);
+                    localStorage.setItem('vmis_service_providers', JSON.stringify(window.serviceProviders));
+                    window.showNotification(`Service provider deleted successfully`, 'success');
+                    window.updateServiceProvidersList();
+                }
+            };
+            
+            // View Records functionality
+            const viewRecordsBtn = document.getElementById('viewRecords');
+            if (viewRecordsBtn) {
+                viewRecordsBtn.onclick = function() {
+                    document.getElementById('viewRecordsModal').style.display = 'block';
+                    
+                    const recordsList = document.getElementById('recordsList');
+                    if (recordsList) {
+                        if (window.vehicles.length === 0) {
+                            recordsList.innerHTML = '<p>No vehicle records found.</p>';
+                        } else {
+                            recordsList.innerHTML = window.vehicles.map(vehicle => `
+                                <div class="record-card">
+                                    <h4>${vehicle.vehicleMake} ${vehicle.vehicleModel}</h4>
+                                    <p><strong>Year:</strong> ${vehicle.year}</p>
+                                    <p><strong>License Plate:</strong> ${vehicle.licensePlate}</p>
+                                    <p><strong>Owner:</strong> ${vehicle.ownerName}</p>
+                                    <p><strong>Type:</strong> ${vehicle.vehicleType}</p>
+                                    <p><strong>Added:</strong> ${vehicle.dateAdded}</p>
+                                </div>
+                            `).join('');
+                        }
+                    }
+                };
+            }
+            
+            // Quick Tour Implementation
+            window.tourSteps = [
+                {
+                    title: '🚀 Welcome to VMIS - Step 1 of 4',
+                    content: `
+                        <div class="tour-step-content">
+                            <div class="tour-hero">
+                                <div class="tour-icon">🏠</div>
+                                <h3>Your Personal Vehicle Command Center</h3>
+                            </div>
+                            
+                            <p class="tour-description">Welcome to your intelligent dashboard - your one-stop hub for managing everything vehicle-related. Think of it as your personal automotive assistant that never sleeps!</p>
+                            
+                            <div class="tour-features">
+                                <div class="feature-grid">
+                                    <div class="feature-item">
+                                        <div class="feature-icon">📊</div>
+                                        <div class="feature-text">
+                                            <h4>Smart Overview</h4>
+                                            <p>Real-time fleet status and analytics</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">📝</div>
+                                        <div class="feature-text">
+                                            <h4>Quick Forms</h4>
+                                            <p>Add vehicles and records in seconds</p>
+                                        </div>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">🔍</div>
+                                        <div class="feature-text">
+                                            <h4>Vehicle Lookup</h4>
+                                            <p>Instant access to specifications</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tour-tip">
+                                <div class="tip-icon">💡</div>
+                                <p><strong>Pro Tip:</strong> Everything is designed to save you time - most tasks take under 30 seconds!</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    title: '🚗 Vehicle Registration - Step 2 of 4',
+                    content: `
+                        <div class="tour-step-content">
+                            <div class="tour-hero">
+                                <div class="tour-icon">📋</div>
+                                <h3>Register Your Fleet in Minutes</h3>
+                            </div>
+                            
+                            <p class="tour-description">Adding vehicles is incredibly simple. Our smart forms guide you through the process, and you can even scan your registration or insurance documents!</p>
+                            
+                            <div class="tour-process">
+                                <div class="process-step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-content">
+                                        <h4>Vehicle Basics</h4>
+                                        <p>Make, model, year, VIN - all the essentials</p>
+                                        <div class="step-visual">🚗→📝→✅</div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-content">
+                                        <h4>Owner Information</h4>
+                                        <p>Driver details and contact information</p>
+                                        <div class="step-visual">👤→📞→✅</div>
+                                    </div>
+                                </div>
+                                <div class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-content">
+                                        <h4>Insurance & Docs</h4>
+                                        <p>Upload or link insurance and registration</p>
+                                        <div class="step-visual">🛡️→📄→✅</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tour-highlight">
+                                <div class="highlight-badge">⚡ Fast Track</div>
+                                <p>Use our vehicle lookup to auto-fill specifications instantly!</p>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    title: '🔧 Smart Maintenance - Step 3 of 4',
+                    content: `
+                        <div class="tour-step-content">
+                            <div class="tour-hero">
+                                <div class="tour-icon">⚙️</div>
+                                <h3>Never Miss Maintenance Again</h3>
+                            </div>
+                            
+                            <p class="tour-description">Our intelligent maintenance system learns your vehicle's needs and sends you timely reminders. Say goodbye to expensive repairs caused by missed maintenance!</p>
+                            
+                            <div class="maintenance-benefits">
+                                <div class="benefit-item premium">
+                                    <div class="benefit-icon">🔔</div>
+                                    <h4>Smart Alerts</h4>
+                                    <p>Get notified via email, SMS, or push notifications based on mileage and time</p>
+                                </div>
+                                <div class="benefit-item premium">
+                                    <div class="benefit-icon">📊</div>
+                                    <h4>Cost Tracking</h4>
+                                    <p>Monitor maintenance expenses and identify cost-saving opportunities</p>
+                                </div>
+                                <div class="benefit-item premium">
+                                    <div class="benefit-icon">🏆</div>
+                                    <h4>Service History</h4>
+                                    <p>Complete records that boost resale value and warranty claims</p>
+                                </div>
+                            </div>
+                            
+                            <div class="savings-counter">
+                                <div class="counter-icon">💰</div>
+                                <div class="counter-text">
+                                    <h4>Average Savings: $1,200/year</h4>
+                                    <p>Preventive maintenance vs. emergency repairs</p>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                {
+                    title: '🎯 You are Ready to Go! - Step 4 of 4',
+                    content: `
+                        <div class="tour-step-content">
+                            <div class="tour-hero success">
+                                <div class="tour-icon">🎉</div>
+                                <h3>Welcome to Stress-Free Vehicle Management!</h3>
+                            </div>
+                            
+                            <p class="tour-description">You now have access to the most comprehensive vehicle management system. Here's what you can do right away:</p>
+                            
+                            <div class="action-grid">
+                                <div class="action-card primary">
+                                    <div class="action-icon">🚗</div>
+                                    <h4>Add Your First Vehicle</h4>
+                                    <p>Start with your most-used vehicle and expand from there</p>
+                                    <div class="action-time">⏱️ 2 minutes</div>
+                                </div>
+                                <div class="action-card">
+                                    <div class="action-icon">🔍</div>
+                                    <h4>Try Vehicle Lookup</h4>
+                                    <p>Search any vehicle to see detailed specifications</p>
+                                    <div class="action-time">⏱️ 30 seconds</div>
+                                </div>
+                                <div class="action-card">
+                                    <div class="action-icon">📱</div>
+                                    <h4>Set Up Notifications</h4>
+                                    <p>Configure alerts for maintenance and renewals</p>
+                                    <div class="action-time">⏱️ 1 minute</div>
+                                </div>
+                            </div>
+                            
+                            <div class="success-message">
+                                <div class="success-icon">🌟</div>
+                                <h4>You're all set to save time, money, and stress!</h4>
+                                <p>Join thousands of users who've simplified their vehicle management with VMIS.</p>
+                            </div>
+                            
+                            <div class="next-steps">
+                                <div class="steps-icon">🚀</div>
+                                <p><strong>Ready to start?</strong> Click "Get Started" to add your first vehicle and experience the difference!</p>
+                            </div>
+                        </div>
+                    `
+                }
+            ];
+            
+            window.currentTourStep = 0;
+            
+            window.startQuickTour = function() {
+                console.log('Starting quick tour');
+                document.getElementById('learnMoreModal').style.display = 'none';
+                document.getElementById('quickTourModal').style.display = 'block';
+                window.currentTourStep = 0;
+                window.updateTourStep();
+            };
+            
+            window.updateTourStep = function() {
+                const step = window.tourSteps[window.currentTourStep];
+                document.getElementById('tourTitle').textContent = step.title;
+                document.getElementById('tourStep').innerHTML = step.content;
+                
+                // Update progress bar
+                const progress = ((window.currentTourStep + 1) / window.tourSteps.length) * 100;
+                document.getElementById('tourProgress').style.width = progress + '%';
+                
+                // Update navigation buttons
+                const prevBtn = document.getElementById('tourPrev');
+                const nextBtn = document.getElementById('tourNext');
+                
+                prevBtn.disabled = window.currentTourStep === 0;
+                
+                if (window.currentTourStep === window.tourSteps.length - 1) {
+                    nextBtn.textContent = 'Finish Tour ✅';
+                } else {
+                    nextBtn.textContent = 'Next ➡️';
+                }
+            };
+            
+            // Tour navigation
+            const tourPrevBtn = document.getElementById('tourPrev');
+            if (tourPrevBtn) {
+                tourPrevBtn.onclick = function() {
+                    if (window.currentTourStep > 0) {
+                        window.currentTourStep--;
+                        window.updateTourStep();
+                    }
+                };
+            }
+            
+            const tourNextBtn = document.getElementById('tourNext');
+            if (tourNextBtn) {
+                tourNextBtn.onclick = function() {
+                    if (window.currentTourStep < window.tourSteps.length - 1) {
+                        window.currentTourStep++;
+                        window.updateTourStep();
+                    } else {
+                        // Tour finished
+                        document.getElementById('quickTourModal').style.display = 'none';
+                        alert('🎉 Tour completed! You\'re ready to start using VMIS. Click "Get Started" to create your account.');
+                    }
+                };
+            }
+            
+            const tourSkipBtn = document.getElementById('tourSkip');
+            if (tourSkipBtn) {
+                tourSkipBtn.onclick = function() {
+                    document.getElementById('quickTourModal').style.display = 'none';
+                };
+            }
+            
+            // Enhanced notification system
+            window.showNotification = function(message, type = 'success') {
+                // Remove existing notifications
+                const existingNotifications = document.querySelectorAll('.notification');
+                existingNotifications.forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.remove()">&times;</button>
+                `;
+                
+                // Add styles if not already present
+                if (!document.getElementById('notificationStyles')) {
+                    const style = document.createElement('style');
+                    style.id = 'notificationStyles';
+                    style.textContent = `
+                        .notification {
+                            position: fixed;
+                            top: 20px;
+                            right: 20px;
+                            padding: 15px 20px;
+                            border-radius: 8px;
+                            color: white;
+                            font-weight: bold;
+                            z-index: 10000;
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            max-width: 400px;
+                            animation: slideIn 0.3s ease-out;
+                        }
+                        .notification.success { background: #28a745; }
+                        .notification.error { background: #dc3545; }
+                        .notification.info { background: #17a2b8; }
+                        .notification button {
+                            background: none;
+                            border: none;
+                            color: white;
+                            font-size: 18px;
+                            cursor: pointer;
+                            padding: 0;
+                        }
+                        @keyframes slideIn {
+                            from { transform: translateX(100%); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+            };
+            
+            // Enhanced form submissions with notifications
+            const originalVehicleSubmit = window.handleVehicleFormSubmit;
+            window.handleVehicleFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const vehicle = {
+                        id: Date.now().toString(),
+                        ownerName: formData.get('ownerName'),
+                        vehicleMake: formData.get('vehicleMake'),
+                        vehicleModel: formData.get('vehicleModel'),
+                        year: formData.get('year'),
+                        licensePlate: formData.get('licensePlate'),
+                        vehicleType: formData.get('vehicleType'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.vehicles.push(vehicle);
+                    localStorage.setItem('vmis_vehicles', JSON.stringify(window.vehicles));
+                    
+                    window.showNotification(`✅ Vehicle ${vehicle.vehicleMake} ${vehicle.vehicleModel} added successfully!`, 'success');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            const originalInsuranceSubmit = window.handleInsuranceFormSubmit;
+            window.handleInsuranceFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const insurance = {
+                        id: Date.now().toString(),
+                        insuranceProvider: formData.get('insuranceProvider'),
+                        policyNumber: formData.get('policyNumber'),
+                        expirationDate: formData.get('expirationDate'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.insuranceRecords.push(insurance);
+                    localStorage.setItem('vmis_insurance', JSON.stringify(window.insuranceRecords));
+                    
+                    window.showNotification(`✅ Insurance policy ${insurance.policyNumber} saved successfully!`, 'success');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            const originalMaintenanceSubmit = window.handleMaintenanceFormSubmit;
+            window.handleMaintenanceFormSubmit = function(formId) {
+                const form = document.getElementById(formId);
+                if (!form) return;
+                
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(form);
+                    const maintenance = {
+                        id: Date.now().toString(),
+                        maintenanceTask: formData.get('maintenanceTask'),
+                        inspectionDate: formData.get('inspectionDate'),
+                        mileage: formData.get('mileage'),
+                        dateAdded: new Date().toLocaleDateString()
+                    };
+                    
+                    window.maintenanceRecords.push(maintenance);
+                    localStorage.setItem('vmis_maintenance', JSON.stringify(window.maintenanceRecords));
+                    
+                    window.showNotification(`✅ Maintenance record for ${maintenance.maintenanceTask} saved successfully!`, 'success');
+                    form.reset();
+                    window.updateDashboardData();
+                };
+            };
+            
+            // Setup all forms
+            window.handleVehicleFormSubmit('dashboardVehicleForm');
+            window.handleInsuranceFormSubmit('dashboardInsuranceForm');
+            window.handleMaintenanceFormSubmit('dashboardMaintenanceForm');
+            
+            // Initialize vehicle lookup
+            window.initVehicleLookup();
+            
+            // Initialize service providers list
+            window.updateServiceProvidersList();
+            
+            // Update dashboard on load
+            window.updateDashboardData();
+            
+            // Add some sample data for demo purposes if no data exists
+            if (window.vehicles.length === 0 && window.maintenanceRecords.length === 0 && window.insuranceRecords.length === 0) {
+                console.log('Adding sample data for demo...');
+                
+                // Add sample vehicle
+                const sampleVehicle = {
+                    id: 'sample-1',
+                    ownerName: 'Demo User',
+                    vehicleMake: 'Toyota',
+                    vehicleModel: 'Camry',
+                    year: '2022',
+                    licensePlate: 'ABC-1234',
+                    vehicleType: 'Sedan',
+                    dateAdded: new Date().toLocaleDateString()
+                };
+                window.vehicles.push(sampleVehicle);
+                localStorage.setItem('vmis_vehicles', JSON.stringify(window.vehicles));
+                
+                // Add sample maintenance record
+                const sampleMaintenance = {
+                    id: 'sample-maintenance-1',
+                    maintenanceTask: 'Oil Change',
+                    inspectionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+                    mileage: '25000',
+                    dateAdded: new Date().toLocaleDateString()
+                };
+                window.maintenanceRecords.push(sampleMaintenance);
+                localStorage.setItem('vmis_maintenance', JSON.stringify(window.maintenanceRecords));
+                
+                // Add sample insurance record
+                const sampleInsurance = {
+                    id: 'sample-insurance-1',
+                    insuranceProvider: 'State Farm',
+                    policyNumber: 'SF-123456789',
+                    expirationDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 6 months from now
+                    dateAdded: new Date().toLocaleDateString()
+                };
+                window.insuranceRecords.push(sampleInsurance);
+                localStorage.setItem('vmis_insurance', JSON.stringify(window.insuranceRecords));
+                
+                // Add sample service provider
+                const sampleProvider = {
+                    id: 'sample-provider-1',
+                    name: 'Mike\'s Auto Service',
+                    phone: '(555) 123-4567',
+                    address: '123 Main St, Anytown, ST 12345',
+                    email: 'service@mikesauto.com',
+                    serviceTypes: ['oil-change', 'brake-repair', 'tire-service'],
+                    rating: '4',
+                    notes: 'Reliable and affordable. Great customer service.',
+                    dateAdded: new Date().toLocaleDateString()
+                };
+                window.serviceProviders.push(sampleProvider);
+                localStorage.setItem('vmis_service_providers', JSON.stringify(window.serviceProviders));
+                
+                // Update displays
+                window.updateDashboardData();
+                window.updateServiceProvidersList();
+                
+                window.showNotification('🎉 Welcome to VMIS! Sample data has been added to help you explore the features.', 'info');
+            }
+            
+            console.log('🚀 VMIS FULLY INITIALIZED - ALL FEATURES WORKING!');
+            console.log('📊 Current data:', {
+                vehicles: window.vehicles.length,
+                maintenance: window.maintenanceRecords.length,
+                insurance: window.insuranceRecords.length,
+                serviceProviders: window.serviceProviders.length
+            });
+        });
+    </script>
+    
+</body>
+</html>

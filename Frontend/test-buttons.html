@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test - VMIS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>VMIS Button Test Page</h1>
+        <p>This is a simple test page to verify button functionality.</p>
+        
+        <button id="test1" class="test-button">Test Button 1</button>
+        <button id="test2" class="test-button">Test Button 2</button>
+        <button id="getStartedBtn" class="test-button">Get Started (Same ID)</button>
+        <button id="learnMoreBtn" class="test-button">Learn More (Same ID)</button>
+        
+        <div id="output" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            <h3>Test Output:</h3>
+            <div id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+
+        log('Test page loaded');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            log('DOM ready');
+
+            // Test simple buttons
+            document.getElementById('test1').addEventListener('click', function() {
+                log('Test Button 1 clicked!');
+                alert('Test Button 1 works!');
+            });
+
+            document.getElementById('test2').addEventListener('click', function() {
+                log('Test Button 2 clicked!');
+                alert('Test Button 2 works!');
+            });
+
+            // Test buttons with same IDs as main page
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+
+            log('Get Started Button found: ' + (getStartedBtn ? 'YES' : 'NO'));
+            log('Learn More Button found: ' + (learnMoreBtn ? 'YES' : 'NO'));
+
+            if (getStartedBtn) {
+                getStartedBtn.addEventListener('click', function() {
+                    log('Get Started button clicked!');
+                    alert('Get Started button works!');
+                });
+            }
+
+            if (learnMoreBtn) {
+                learnMoreBtn.addEventListener('click', function() {
+                    log('Learn More button clicked!');
+                    alert('Learn More button works!');
+                });
+            }
+
+            log('All event listeners set up');
+        });
+
+        log('Script completed');
+    </script>
+</body>
+</html>

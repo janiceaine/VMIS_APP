@@ -1,0 +1,83 @@
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    container_name: vmis-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Com3onnow!
+      - MSSQL_PID=Express
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./Backend/VehicleDb.sql:/app/VehicleDb.sql
+      - ./database/init-db.sh:/app/init-db.sh
+    command: >
+      bash -c "
+        /opt/mssql/bin/sqlservr &
+        sleep 30 &&
+        /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Com3onnow!' -C -i /app/VehicleDb.sql &&
+        wait
+      "
+    networks:
+      - vmis-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Com3onnow!' -C -Q 'SELECT 1' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./Backend/VehicleBackend
+      dockerfile: Dockerfile
+    container_name: vmis-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=VehicleDb;User Id=sa;Password=Com3onnow!;TrustServerCertificate=true;
+    ports:
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - vmis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/health || exit 1"]
+      interval: 30s
+      retries: 3
+      start_period: 40s
+      timeout: 10s
+
+  # Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: vmis-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - vmis-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
+volumes:
+  sqlserver_data:
+    driver: local
+
+networks:
+  vmis-network:
+    driver: bridge

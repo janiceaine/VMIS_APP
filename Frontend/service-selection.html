@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Services</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="glass-container">
+    <h2 id="greeting"></h2>
+    <div id="vehicle3D"></div>
+    <form id="serviceForm"></form>
+  </div>
+
+  <script>
+    const type = sessionStorage.getItem("vehicleType");
+    const name = sessionStorage.getItem("ownerName");
+    const services = JSON.parse(sessionStorage.getItem("services") || "[]");
+
+    document.getElementById("greeting").textContent = `Hello, ${name}! Select services for your ${type}.`;
+
+    const vehicle3D = document.getElementById("vehicle3D");
+    const img = document.createElement("img");
+    img.src = `images/${type}-3d.png`; // Use local or hosted 3D-like image
+    img.alt = `${type} image`;
+    img.style.width = "100%";
+    vehicle3D.appendChild(img);
+
+    const form = document.getElementById("serviceForm");
+    services.forEach(service => {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = `
+        <label>
+          <input type="checkbox" name="service" value="${service.name}">
+          ${service.name} - $${service.price}
+        </label><br/>
+        <select name="${service.name}_action">
+          <option value="">Choose action</option>
+          <option value="book">Book Service</option>
+          <option value="remind">Set Reminder</option>
+        </select>
+        <br/><br/>
+      `;
+      form.appendChild(wrapper);
+    });
+
+    const submit = document.createElement("button");
+    submit.textContent = "Submit Selection";
+    submit.type = "submit";
+    form.appendChild(submit);
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Your selections have been saved!");
+    });
+  </script>
+</body>
+</html>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta name="description" content="Select services for your vehicle maintenance and inspection." />
+  <meta name="keywords" content="vehicle, maintenance, inspection, services, selection" />
+  <meta name="author" content="Janice Ainembabazi" />
