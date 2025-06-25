@@ -174,46 +174,66 @@ The frontend is configured to automatically deploy to Netlify from this GitHub r
    - Change the production `API_BASE_URL` to your backend URL
    - Commit and push - Netlify will auto-redeploy
 
-### Backend Deployment (Heroku/Railway/Azure)
+### Backend Deployment (Render - Recommended!)
 
-For the ASP.NET Core backend, I recommend these platforms:
+Render is perfect for .NET applications with free tier and easy deployment:
 
-**Option 1: Heroku** (Free tier available)
+**Step-by-step Render Deployment:**
+
+1. **Push your code to GitHub** (if you haven't already):
 ```bash
-# Install Heroku CLI
-brew install heroku/brew/heroku
-
-# Login and create app
-heroku login
-heroku create your-vmis-backend
-
-# Set environment variables
-heroku config:set ASPNETCORE_ENVIRONMENT=Production -a your-vmis-backend
-
-# Deploy
-git subtree push --prefix=Backend heroku main
+git add .
+git commit -m "Prepare for Render deployment"
+git push origin main
 ```
 
-**Option 2: Railway** (Easy deployment)
-- Connect your GitHub repo at [railway.app](https://railway.app)
-- Select the Backend folder
-- Railway auto-detects .NET and deploys
+2. **Create Render Account**:
+   - Go to [render.com](https://render.com) and sign up
+   - Connect your GitHub account
 
-**Option 3: Azure App Service** (Microsoft's platform)
-- Perfect fit for ASP.NET Core
-- Integrates well with Azure SQL Database
-- Use Visual Studio or Azure CLI for deployment
+3. **Deploy Backend**:
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+   - Configure:
+     - **Name**: `vmis-backend` (or your preferred name)
+     - **Runtime**: `Docker` or `Native Environment`
+     - **Build Command**: `./render-build.sh`
+     - **Start Command**: `cd Backend/VehicleBackend/publish && dotnet VehicleBackend.dll`
+     - **Port**: `5000` (Render will set PORT environment variable)
+
+4. **Environment Variables** (Add in Render dashboard):
+   - `ASPNETCORE_ENVIRONMENT` = `Production`
+   - `JWT_SECRET` = `YourSecureJWTSecretKey123!`
+   - `ConnectionStrings__DefaultConnection` = (see database section below)
+
+5. **Your backend will be live at**: `https://vmis-backend.onrender.com`
+
+**Alternative Options:**
+- **Heroku**: Still good but paid plans only now
+- **Railway**: Great alternative, similar to Render
+- **Azure App Service**: Best for enterprise .NET applications
 
 ### Database Options
 
-**For Production:**
+**For Production (Render Integration):**
+- **Render PostgreSQL** (Free tier available, integrates perfectly)
+  - Create PostgreSQL database in Render dashboard
+  - Render provides connection string automatically
+  - Modify your backend to use PostgreSQL instead of SQL Server
+
+**Other Production Options:**
 - **Azure SQL Database** (scales well, managed)
-- **AWS RDS SQL Server** (reliable, AWS ecosystem)
-- **Railway PostgreSQL** (if you modify to use PostgreSQL)
+- **AWS RDS** (PostgreSQL or SQL Server)
+- **PlanetScale** (MySQL, serverless)
 
 **For Development/Demo:**
-- Keep using Docker with SQL Server
-- Railway provides free PostgreSQL databases
+- Keep using Docker with SQL Server locally
+- Switch to PostgreSQL to match production
+
+**Quick PostgreSQL Migration:**
+- Update your `VehicleBackend.csproj` to use Npgsql instead of SqlClient
+- Modify connection strings in `appsettings.json`
+- Update Entity Framework to use PostgreSQL provider
 
 ### GitHub Setup
 

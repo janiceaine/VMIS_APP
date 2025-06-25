@@ -6,8 +6,9 @@ const CONFIG = {
         CAR_API_KEY: 'ccMkKIb/Hi2DVRxw3jaMUQ==lGqgW96NZkxJKlm5'
     },
     production: {
-        // Update this with your deployed backend URL
-        API_BASE_URL: 'https://your-backend-app.herokuapp.com',
+        // Update this with your deployed backend URL from Render
+        // Format: https://your-service-name.onrender.com
+        API_BASE_URL: 'https://vmis-backend.onrender.com',
         CAR_API_BASE_URL: 'https://api.api-ninjas.com/v1/cars',
         CAR_API_KEY: 'ccMkKIb/Hi2DVRxw3jaMUQ==lGqgW96NZkxJKlm5'
     }

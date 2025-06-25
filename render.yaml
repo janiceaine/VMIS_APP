@@ -1,0 +1,15 @@
+# Render.com deployment configuration for VMIS Backend
+
+# Build Configuration
+buildCommand: "./render-build.sh"
+publishPath: "Backend/VehicleBackend/publish"
+startCommand: "dotnet VehicleBackend.dll"
+
+# Environment
+runtime: "dotnet"
+
+# Health Check
+healthCheckPath: "/api/health"
+
+# Auto Deploy
+autoDeployBranch: "main"

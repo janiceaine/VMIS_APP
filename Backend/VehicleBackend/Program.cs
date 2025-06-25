@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS
+// Add CORS - Updated for production deployment
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -27,16 +27,33 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
+    
+    // More restrictive policy for production (you can switch to this later)
+    options.AddPolicy("Production",
+        builder =>
+        {
+            builder
+                .WithOrigins(
+                    "http://localhost:3001",
+                    "https://localhost:3001", 
+                    "https://*.netlify.app",
+                    "https://*.netlify.com"
+                )
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
 });
 
 // Add JWT Authentication
+var jwtSecret = builder.Configuration["Jwt:Secret"] ?? "YourDefaultSecretKeyForDevelopment123!";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Secret"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSecret)),
             ValidateIssuer = false,
             ValidateAudience = false
         };
@@ -50,11 +67,26 @@ builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 
 var app = builder.Build();
 
+// Configure port for Render deployment
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// For production, still show Swagger for API documentation
+if (app.Environment.IsProduction())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "VMIS API V1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
 app.UseHttpsRedirection();
@@ -64,6 +96,7 @@ app.UseAuthorization();
 
 // Add health check endpoint
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow, service = "VMIS Backend" }));
 
 app.MapControllers();
 
