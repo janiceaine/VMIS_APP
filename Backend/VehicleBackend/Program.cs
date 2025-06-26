@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
-    
+
     // More restrictive policy for production (you can switch to this later)
     options.AddPolicy("Production",
         builder =>
@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
             builder
                 .WithOrigins(
                     "http://localhost:3001",
-                    "https://localhost:3001", 
+                    "https://localhost:3001",
                     "https://*.netlify.app",
                     "https://*.netlify.com"
                 )
@@ -89,12 +89,23 @@ if (app.Environment.IsProduction())
     });
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection in development - Render handles HTTPS at proxy level
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Add health check endpoint
+app.MapGet("/", () => Results.Ok(new { 
+    message = "VMIS Backend API is running!", 
+    timestamp = DateTime.UtcNow,
+    environment = app.Environment.EnvironmentName,
+    version = "1.0.0"
+}));
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 app.MapGet("/api/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow, service = "VMIS Backend" }));
 
