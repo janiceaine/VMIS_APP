@@ -14,10 +14,18 @@ ASP.NET Core's dependency injection and middleware pipeline initially seemed com
 ## Getting Started
 
 ### What You'll Need
+- Docker Desktop installed and running
 - Curiosity to explore the codebase
 
 ### Quick Setup
 
+```bash
+# Navigate to the project directory
+cd /Users/janiceaine/Documents/VMIS
+
+# Start everything with Docker
+docker-compose up --build
+```
 
 Then visit:
 - **Frontend**: http://localhost:3001 (the sleek UI I built with vanilla JS)
@@ -196,15 +204,15 @@ git push origin main
    - Connect your GitHub repository
    - Configure:
      - **Name**: `vmis-backend` (or your preferred name)
-     - **Runtime**: `Docker` or `Native Environment`
+     - **Runtime**: `Native Environment`
      - **Build Command**: `./render-build.sh`
-     - **Start Command**: `cd Backend/VehicleBackend/publish && dotnet VehicleBackend.dll`
-     - **Port**: `5000` (Render will set PORT environment variable)
+     - **Start Command**: `dotnet VehicleBackend.dll`
+     - **Auto-Deploy**: Yes (deploys when you push to GitHub)
 
 4. **Environment Variables** (Add in Render dashboard):
    - `ASPNETCORE_ENVIRONMENT` = `Production`
    - `JWT_SECRET` = `YourSecureJWTSecretKey123!`
-   - `ConnectionStrings__DefaultConnection` = (see database section below)
+   - `ASPNETCORE_URLS` = `http://+:5000`
 
 5. **Your backend will be live at**: `https://vmis-backend.onrender.com`
 
