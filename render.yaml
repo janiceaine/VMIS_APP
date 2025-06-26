@@ -1,8 +1,8 @@
 # Render.com deployment configuration for VMIS Backend
 
-# Build Configuration
+# Build Configuration - Native .NET approach
 buildCommand: "./render-build.sh"
-publishPath: "Backend/VehicleBackend/publish"
+publishPath: "publish"
 startCommand: "dotnet VehicleBackend.dll"
 
 # Environment

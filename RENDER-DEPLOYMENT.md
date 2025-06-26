@@ -33,16 +33,22 @@ git push origin main
 **Service Configuration:**
 ```
 Name: vmis-backend
-Runtime: Native Environment
+Runtime: Native Environment (.NET)
 Build Command: ./render-build.sh
-Start Command: cd Backend/VehicleBackend/publish && dotnet VehicleBackend.dll
+Start Command: dotnet VehicleBackend.dll
 ```
+
+**Important Settings:**
+- **Root Directory**: Leave empty (deploy from repo root)
+- **Branch**: main
+- **Auto-Deploy**: Yes
 
 **Environment Variables:**
 ```
 ASPNETCORE_ENVIRONMENT=Production
 JWT_SECRET=YourSecureJWTSecretKey123!
 PORT=5000
+ASPNETCORE_URLS=http://+:5000
 ```
 
 ### 4. Create PostgreSQL Database (Optional)
