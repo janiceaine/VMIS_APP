@@ -17,31 +17,28 @@ ASP.NET Core's dependency injection and middleware pipeline initially seemed com
 - Docker Desktop installed and running
 - Curiosity to explore the codebase
 
-### Quick Setup
-
-```bash
+### Quick ``bash
 # Navigate to the project directory
-cd /Users/janiceaine/Documents/VMIS
 
 # Start everything with Docker
 docker-compose up --build
 ```
 
 Then visit:
-- **Frontend**: http://localhost:3001 (the sleek UI I built with vanilla JS)
-- **Backend API**: http://localhost:5001 (my ASP.NET Core masterpiece)
-- **Database**: localhost:1434 (SQL Server doing the heavy lifting)
+- **Frontend**: (the sleek UI I built with vanilla JS)
+- **Backend API**: (my ASP.NET Core masterpiece)
+- **Database**: (SQL Server doing the heavy lifting)
 
 *Note: I learned the hard way that port conflicts are real - hence the non-standard ports!*
 
 ## Architecture Deep Dive
 
-### Frontend (Port 3001)
+### Frontend 
 This started as a simple HTML page but evolved into a responsive single-page application. I deliberately chose vanilla JavaScript over frameworks to really understand the fundamentals. The challenge of managing state without React or Vue taught me so much about DOM manipulation and event handling.
 
 The CSS animations and responsive design were particularly fun to implement - there's something satisfying about crafting smooth transitions without external libraries.
 
-### Backend (Port 5001)
+### Backend 
 Here's where my C# journey really took off. The ASP.NET Core Web API handles:
 - **Vehicle Management**: CRUD operations with proper validation
 - **Maintenance Tracking**: Complex relationships between vehicles and service records
@@ -50,7 +47,7 @@ Here's where my C# journey really took off. The ASP.NET Core Web API handles:
 
 The controller pattern in ASP.NET initially felt verbose compared to Express.js, but I've grown to appreciate the explicit nature and built-in model binding.
 
-### Database (Port 1434)
+### Database 
 SQL Server was completely new territory for me. Coming from MongoDB, the relational model required a mindset shift. Learning about foreign keys, indexes, and proper normalization has been invaluable. The initialization scripts that automatically set up the schema were a game-changer for development workflow.
 
 ## Development Commands I Use Daily
@@ -114,7 +111,7 @@ The docker-compose.yml handles these automatically, but understanding what they 
 
 ```yaml
 # SQL Server setup
-MSSQL_SA_PASSWORD: 'Com3onnow!'  # Not production-ready, obviously!
+MSSQL_SA_PASSWORD'  # Not production-ready, obviously!
 ACCEPT_EULA: 'Y'
 
 # ASP.NET Core configuration
